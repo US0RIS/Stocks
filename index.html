@@ -123,29 +123,30 @@ tbody td:first-child{text-align:left;padding-left:14px}
 .up{color:var(--green);font-weight:700}
 .down{color:var(--red);font-weight:700}
 .mini{width:120px;height:34px}
-/* Drawer */
-.drawer-overlay{position:fixed;inset:0;background:rgba(15,42,68,.38);display:none;align-items:stretch;justify-content:flex-end;z-index:50}
-.drawer{width:min(520px,94vw);background:#fff;border-left:1px solid #cfd8e3;box-shadow:0 24px 60px rgba(0,0,0,.22);display:flex;flex-direction:column}
-.drawer-top{padding:12px 14px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.drawer-top .t{font-size:1.02rem;font-weight:800;line-height:1.1}
-.drawer-top .n{color:var(--muted);font-size:.85rem}
-.drawer-close{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
-.drawer-body{padding:12px 14px;overflow:auto;display:grid;gap:12px}
-.bigprice{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.bigprice .p{font-size:1.8rem;font-weight:900}
-.hr{height:1px;background:#eef2f7;margin:4px 0}
-.desc{color:#374151;line-height:1.35}
-.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:520px){.twocol{grid-template-columns:1fr}}
-.statbox{border:1px solid #eef2f7;border-radius:12px;padding:10px 12px;background:#fbfcfe}
-.statbox .k{color:var(--muted);font-size:.72rem}
-.statbox .v{font-weight:800;margin-top:4px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}
-.tab{border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer;font-size:.84rem;color:#374151}
-.tab.active{background:#eef6ff;border-color:#c7ddff;color:#1e40af;font-weight:700}
-.orderbox{border:1px solid #dbe3ee;border-radius:14px;padding:12px;background:#f9fbff}
+/* ===== Detail page layout ===== */
+.detailPage{display:none}
+.detailGrid{display:grid;gap:14px;grid-template-columns:1.35fr .65fr;align-items:stretch}
+@media (max-width: 980px){.detailGrid{grid-template-columns:1fr}}
+.graphCard{border:1px solid #eef2f7;border-radius:14px;background:#fbfcfe;padding:12px}
+.detailHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.detailHeader .left .sym{font-size:1.25rem;font-weight:900;letter-spacing:.3px}
+.detailHeader .left .nm{color:var(--muted);font-size:.9rem;margin-top:2px}
+.detailHeader .right{text-align:right}
+.detailHeader .price{font-size:1.9rem;font-weight:900}
+.detailHeader .chg{font-weight:900}
+.detailHeader .range{color:var(--muted);font-size:.78rem;margin-top:4px}
+#bigChart{width:100%;height:300px;display:block}
+.tradeCard{border:1px solid #dbe3ee;border-radius:14px;background:#f9fbff;padding:12px}
+.tradeCard h3{margin:0 0 8px 0;font-size:.95rem}
 .ordergrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ordergrid .full{grid-column:1/-1}
+.help{font-size:.78rem;color:var(--muted);line-height:1.3}
+.descCard{grid-column:1/-1}
+.statsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+@media (max-width:980px){.statsGrid{grid-template-columns:repeat(2,1fr)}}
+.statbox{border:1px solid #eef2f7;border-radius:12px;padding:10px 12px;background:#fbfcfe}
+.statbox .k{color:var(--muted);font-size:.72rem}
+.statbox .v{font-weight:900;margin-top:4px}
 .toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0b1220;color:#fff;padding:10px 12px;border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.22);display:none;z-index:60;font-size:.9rem}
 .err{position:fixed;left:16px;bottom:16px;right:16px;background:#fff;border:2px solid #ef4444;border-radius:14px;padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.25);display:none;z-index:70}
 .err pre{margin:8px 0 0 0;white-space:pre-wrap;color:#7f1d1d}
@@ -161,6 +162,7 @@ tbody td:first-child{text-align:left;padding-left:14px}
     </div>
   </div>
   <div class="topbar">
+    <button class="btn ghost" id="btnBack" style="display:none">← Back</button>
     <div class="pill">⏱ <span id="clock">—</span></div>
     <button class="btn ghost" id="btnTransfers">Transfers</button>
     <button class="btn ghost" id="btnSettings">Settings</button>
@@ -174,6 +176,7 @@ tbody td:first-child{text-align:left;padding-left:14px}
 </header>
 
 <main>
+  <div id="marketsPage">
   <section class="card">
     <div class="card-h">
       <h2>Account overview</h2>
@@ -241,26 +244,77 @@ tbody td:first-child{text-align:left;padding-left:14px}
   </section>
 </main>
 
-<div class="drawer-overlay" id="drawerOverlay">
-  <div class="drawer" id="drawer">
-    <div class="drawer-top">
-      <div>
-        <div class="t" id="dTitle">—</div>
-        <div class="n" id="dName">—</div>
-      </div>
-      <button class="drawer-close" id="btnCloseDrawer">✕</button>
+
+  </div>
+
+<section class="card detailPage" id="detailPage">
+  <div class="card-h">
+    <h2 id="detailTitle">—</h2>
+    <div class="row">
+      <span class="badge" id="detailSector">—</span>
+      <span class="badge" id="detailWatch">Watch: —</span>
     </div>
-    <div class="drawer-body">
-      <div class="bigprice">
-        <div>
-          <div class="p" id="dPrice">$0.00</div>
-          <div class="sub">Last updated <span id="dUpdated">now</span></div>
+  </div>
+  <div class="card-b">
+    <div class="detailGrid">
+      <div class="graphCard">
+        <div class="detailHeader">
+          <div class="left">
+            <div class="sym" id="dTitle">—</div>
+            <div class="nm" id="dName">—</div>
+          </div>
+          <div class="right">
+            <div class="price" id="dPrice">$0.00</div>
+            <div class="chg" id="dChg">+0.00%</div>
+            <div class="range">Day range <span id="dRange">—</span></div>
+          </div>
         </div>
-        <div style="text-align:right">
-          <div id="dChg" style="font-weight:800">0.00%</div>
-          <div class="sub">Day change</div>
-        </div>
+        <canvas id="bigChart"></canvas>
       </div>
+
+      <div class="tradeCard">
+        <h3>Trade</h3>
+        <div class="ordergrid">
+          <select class="select full" id="orderSide">
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+            <option value="short">Short</option>
+            <option value="cover">Cover</option>
+          </select>
+          <input class="input" id="orderQty" type="number" min="1" value="1"/>
+          <select class="select" id="orderType">
+            <option value="market">Market</option>
+            <option value="limit">Limit</option>
+          </select>
+          <input class="input full" id="orderLimit" type="number" step="0.01" placeholder="Limit price (for limit orders)"/>
+          <button class="btn primary full" id="btnPlace" style="justify-content:center;border-color:rgba(255,255,255,.12)">Place order</button>
+        </div>
+        <div class="help" id="orderHelp" style="margin-top:8px">—</div>
+        <div style="height:10px"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn" id="btnWatchToggle" style="background:#fff;color:#1e40af;border-color:#c7ddff">Add to watchlist</button>
+          <button class="btn" id="btnSellAll" style="background:#fff;color:#111827;border-color:#e5e7eb">Sell all</button>
+          <button class="btn" id="btnCoverAll" style="background:#fff;color:#111827;border-color:#e5e7eb">Cover all</button>
+        </div>
+        <div style="height:12px"></div>
+        <h3>Key stats</h3>
+        <div class="help" id="quickStats">—</div>
+      </div>
+
+      <section class="card descCard" style="box-shadow:none">
+        <div class="card-h">
+          <h2>About</h2>
+          <span class="sub">Fundamentals & overview</span>
+        </div>
+        <div class="card-b">
+          <div class="desc" id="dDesc"></div>
+          <div class="statsGrid" id="statsGrid"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
       <canvas id="bigChart" style="width:100%;height:170px;border:1px solid #eef2f7;border-radius:14px;background:#fbfcfe"></canvas>
 
       <div class="tabs">
@@ -408,7 +462,7 @@ function renderTable(){
     const chg = s.last ? (s.price - s.last) / s.last : 0;
     const cls = chg>=0 ? "up":"down";
     const tr=document.createElement("tr");
-    tr.addEventListener("click", ()=>openDrawer(i));
+    tr.addEventListener("click", ()=>openDetail(i));
     tr.innerHTML =
       '<td><div class="ticker">'+s.ticker+'</div><div class="sub">'+(watch.has(s.ticker)?'★ Watch':'')+'</div></td>'+
       '<td><div>'+s.name+'</div><div class="sub">'+s.mcapB.toFixed(2)+'B cap</div></td>'+
@@ -502,54 +556,76 @@ function drawBig(i){
   ctx.lineWidth=2.2; ctx.strokeStyle="#2563eb"; ctx.stroke();
 }
 
-function openDrawer(i){
+
+function openDetail(i){
   selected=i;
-  const s=STOCKS[i];
-  $("drawerOverlay").style.display="flex";
+  $("marketsPage").style.display="none";
+  $("detailPage").style.display="block";
+  $("btnBack").style.display="";
+  fillDetail();
+  drawBig(selected);
+  updateWatchToggle();
+}
+function closeDetail(){
+  $("detailPage").style.display="none";
+  $("marketsPage").style.display="block";
+  $("btnBack").style.display="none";
+  selected=null;
+}
+function fillDetail(){
+  if(selected===null) return;
+  const s=STOCKS[selected];
+  $("detailTitle").textContent = s.ticker + " • " + s.name;
+  $("detailSector").textContent = s.sector;
+  $("detailWatch").textContent = watch.has(s.ticker) ? "Watch: Yes" : "Watch: No";
+
   $("dTitle").textContent=s.ticker;
   $("dName").textContent=s.name+" • "+s.sector;
   $("dDesc").textContent=s.desc;
-  refreshDrawer();
-  setTab("overview");
-  drawBig(i);
-  updateWatchToggle();
-}
-function closeDrawer(){ $("drawerOverlay").style.display="none"; selected=null; }
-function refreshDrawer(){
-  if(selected===null) return;
-  const s=STOCKS[selected];
+
   const chg=s.last? (s.price-s.last)/s.last:0;
   $("dPrice").textContent="$"+fmt(s.price);
   $("dChg").textContent=pct(chg);
   $("dChg").className = (chg>=0?"up":"down");
-  $("dUpdated").textContent="now";
-  $("dOwned").textContent=s.owned;
-  $("dShort").textContent=s.shorted;
-  $("dMcap").textContent=s.mcapB.toFixed(2)+"B";
-  $("dPE").textContent=(s.pe===null? "—": s.pe.toFixed(1));
-  $("dDiv").textContent=s.divY.toFixed(2)+"%";
-  $("dBeta").textContent=s.beta.toFixed(2);
-  $("dEPS").textContent=s.eps.toFixed(2);
-  $("dVol").textContent=fmt0(s.volShares);
-  $("dFloat").textContent=fmt0(s.floatShares);
+
   const lo=(s.dayLow!=null)?s.dayLow:Math.min.apply(null,s.history.slice(-20));
   const hi=(s.dayHigh!=null)?s.dayHigh:Math.max.apply(null,s.history.slice(-20));
   $("dRange").textContent="$"+lo.toFixed(2)+" – $"+hi.toFixed(2);
+
   $("orderHelp").textContent="Cash $"+fmt(cash)+" · Owned "+s.owned+" · Short "+s.shorted+" · Avg cost $"+fmt(s.avgCost||0)+" · Avg short $"+fmt(s.avgShort||0);
   $("orderLimit").disabled = ($("orderType").value!=="limit");
-}
-function setTab(which){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===which));
-  $("panel_overview").style.display = which==="overview"?"":"none";
-  $("panel_stats").style.display = which==="stats"?"":"none";
-  $("panel_trade").style.display = which==="trade"?"":"none";
-  if(which==="trade") refreshDrawer();
+
+  $("quickStats").textContent =
+    "Market cap: "+s.mcapB.toFixed(2)+"B · "+
+    "P/E: "+(s.pe===null? "—": s.pe.toFixed(1))+" · "+
+    "Div: "+s.divY.toFixed(2)+"% · "+
+    "Beta: "+s.beta.toFixed(2);
+
+  const grid = $("statsGrid");
+  grid.innerHTML="";
+  const items = [
+    ["Market cap", s.mcapB.toFixed(2)+"B"],
+    ["P/E", (s.pe===null? "—": s.pe.toFixed(1))],
+    ["Dividend yield", s.divY.toFixed(2)+"%"],
+    ["Beta", s.beta.toFixed(2)],
+    ["EPS", s.eps.toFixed(2)],
+    ["Volume", fmt0(s.volShares)],
+    ["Float", fmt0(s.floatShares)],
+    ["Owned", String(s.owned)]
+  ];
+  for(const [k,v] of items){
+    const d=document.createElement("div");
+    d.className="statbox";
+    d.innerHTML = '<div class="k">'+k+'</div><div class="v">'+v+'</div>';
+    grid.appendChild(d);
+  }
 }
 function updateWatchToggle(){
   if(selected===null) return;
   const s=STOCKS[selected];
   $("btnWatchToggle").textContent = watch.has(s.ticker) ? "Remove from watchlist" : "Add to watchlist";
 }
+
 
 function persistWatch(){ localStorage.setItem("sim_watch", JSON.stringify(Array.from(watch))); }
 
@@ -590,7 +666,7 @@ function placeOrder(){
     openOrders.push({id:orderId++, t:s.ticker, side:side, qty:Math.floor(qty), limit:limit, createdDay:day});
     toast("Placed LIMIT "+side.toUpperCase()+" "+Math.floor(qty)+" "+s.ticker+" @ $"+fmt(limit));
   }
-  renderKPIs(); applyFilters(); refreshDrawer();
+  renderKPIs(); applyFilters(); fillDetail();
 }
 
 function processLimitOrders(){
@@ -669,7 +745,7 @@ function tick(){
   if(Math.random()<0.12) generateEvent();
   renderKPIs();
   applyFilters();
-  if(selected!=null){ refreshDrawer(); drawBig(selected); }
+  if(selected!=null && $("detailPage").style.display!=="none"){ fillDetail(); drawBig(selected); }
 }
 
 /* ===== Boot ===== */
@@ -693,9 +769,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
       applyFilters();
     });
 
-    $("drawerOverlay").addEventListener("click", (e)=>{ if(e.target.id==="drawerOverlay") closeDrawer(); });
-    $("btnCloseDrawer").addEventListener("click", closeDrawer);
-    document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click", ()=>setTab(t.dataset.tab)));
+    
+    
+    
     $("orderType").addEventListener("change", ()=>{ $("orderLimit").disabled = ($("orderType").value!=="limit"); });
     $("btnPlace").addEventListener("click", placeOrder);
     $("btnWatchToggle").addEventListener("click", ()=>{
@@ -708,16 +784,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
       if(selected==null) return;
       const s=STOCKS[selected];
       if(s.owned>0) execFill(s.ticker,"sell",s.owned,s.price);
-      renderKPIs(); applyFilters(); refreshDrawer();
+      renderKPIs(); applyFilters(); fillDetail();
     });
     $("btnCoverAll").addEventListener("click", ()=>{
       if(selected==null) return;
       const s=STOCKS[selected];
       if(s.shorted>0) execFill(s.ticker,"cover",s.shorted,s.price);
-      renderKPIs(); applyFilters(); refreshDrawer();
+      renderKPIs(); applyFilters(); fillDetail();
     });
 
-    $("btnEvent").addEventListener("click", ()=>{ generateEvent(); renderKPIs(); applyFilters(); if(selected!=null){refreshDrawer(); drawBig(selected);} });
+    $("btnEvent").addEventListener("click", ()=>{ generateEvent(); renderKPIs(); applyFilters(); if(selected!=null){fillDetail(); drawBig(selected);} });
 
     $("btnPause").addEventListener("click", ()=>{
       paused=!paused;
@@ -732,6 +808,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     $("btnSave").addEventListener("click", saveGame);
     $("btnLoad").addEventListener("click", loadGame);
+    $("btnBack").addEventListener("click", closeDetail);
+
 
     // first render
     updateClock(); updateBadges(); renderKPIs();
